@@ -15,13 +15,15 @@ public class TopicView {
     private String description;
     private TopicCategory category;
     private Date createdAt;
+    private long rate;
 
     public static TopicView fromTopic(Topic topic) {
         return new TopicView(topic.getId(),
                 topic.getTitle(),
                 topic.getDescription(),
                 topic.getCategory(),
-                topic.getCreatedAt()
+                topic.getCreatedAt(),
+                topic.getRate()
         );
     }
 }

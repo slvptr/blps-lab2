@@ -19,15 +19,17 @@ public class Topic {
     private TopicCategory category;
     private Date createdAt;
     private Date updatedAt;
+    private long rate;
 
 
     public Topic(String title, String description, String content, TopicCategory category,
-                 Date createdAt, Date updatedAt) {
+                 Date createdAt, Date updatedAt, long rate) {
         this.title = title;
         this.description = description;
         this.content = content;
         this.category = category;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.rate = rate;
     }
 }

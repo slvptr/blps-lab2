@@ -63,7 +63,8 @@ public class TopicController {
                             req.getContent(),
                             TopicCategory.valueOf(req.getCategory().toUpperCase()),
                             currentDate,
-                            currentDate
+                            currentDate,
+                            0
                     ));
             return TopicView.fromTopic(topic);
         } catch (IllegalArgumentException e) {
