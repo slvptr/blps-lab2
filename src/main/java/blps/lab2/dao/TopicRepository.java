@@ -1,7 +1,7 @@
 package blps.lab2.dao;
 
-import blps.lab2.model.domain.Topic;
-import blps.lab2.model.domain.TopicCategory;
+import blps.lab2.model.domain.topic.Topic;
+import blps.lab2.model.domain.topic.TopicCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

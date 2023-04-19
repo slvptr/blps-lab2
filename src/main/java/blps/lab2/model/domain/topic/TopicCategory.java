@@ -1,4 +1,4 @@
-package blps.lab2.model.domain;
+package blps.lab2.model.domain.topic;
 
 public enum TopicCategory {
     NEWS("News"),

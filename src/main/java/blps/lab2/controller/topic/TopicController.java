@@ -1,15 +1,18 @@
-package blps.lab2.controller;
+package blps.lab2.controller.topic;
 
-import blps.lab2.model.domain.Topic;
-import blps.lab2.model.domain.TopicCategory;
-import blps.lab2.model.requests.CreateTopicRequest;
-import blps.lab2.model.responses.TopicView;
-import blps.lab2.service.TopicService;
+import blps.lab2.model.domain.topic.Topic;
+import blps.lab2.model.domain.topic.TopicCategory;
+import blps.lab2.model.domain.user.User;
+import blps.lab2.model.requests.topic.CreateTopicRequest;
+import blps.lab2.model.responses.topic.TopicView;
+import blps.lab2.service.topic.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @RestController
@@ -54,7 +57,7 @@ public class TopicController {
     }
 
     @PostMapping(value = "/", consumes = "application/json")
-    public TopicView createTopic(@RequestBody CreateTopicRequest req ) {
+    public TopicView createTopic(@RequestBody @Valid CreateTopicRequest req ) {
         try {
             Date currentDate = new Date();
             Topic topic = topicService.save(
@@ -63,7 +66,9 @@ public class TopicController {
                             req.getContent(),
                             TopicCategory.valueOf(req.getCategory().toUpperCase()),
                             currentDate,
-                            currentDate
+                            currentDate,
+                            0,
+                            (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()
                     ));
             return TopicView.fromTopic(topic);
         } catch (IllegalArgumentException e) {
