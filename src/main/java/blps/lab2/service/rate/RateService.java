@@ -7,6 +7,7 @@ import blps.lab2.model.domain.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -27,28 +28,48 @@ public class RateService {
     }
 
 
-    public Topic rateTopic(long userId, long topicId){
-        Optional<Topic> topicOptional = topicRepository.findById(topicId);
-        if (topicOptional.isEmpty()) return null;
+//    public Topic rateTopic(long userId, long topicId){
+//        Optional<Topic> topicOptional = topicRepository.findById(topicId);
+//        if (topicOptional.isEmpty()) return null;
+//
+//        Optional<User> userOptional = userRepository.findById(userId);
+//        if (userOptional.isEmpty()) return null;
+//
+//        Topic topic = topicOptional.get();
+//        User user = userOptional.get();
+//
+//        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+//            @Override
+//            protected void doInTransactionWithoutResult(TransactionStatus status) {
+//                if (user.getRemainingGrades() > 0) {
+//                    user.setRemainingGrades(user.getRemainingGrades() - 1);
+//                    userRepository.save(user);
+//                    topic.setRate(topic.getRate() + 1);
+//                    topicRepository.save(topic);
+//                } else throw new RuntimeException("У пользователя нет доступных лайков");
+//            }
+//        });
+//
+//        return topic;
+//    }
 
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) return null;
+    public Topic rateTopic(long userId, long topicId) {
+        return transactionTemplate.execute(status -> {
+            Optional<Topic> topicOptional = topicRepository.findById(topicId);
+            if (topicOptional.isEmpty()) return null;
 
-        Topic topic = topicOptional.get();
-        User user = userOptional.get();
+            Optional<User> userOptional = userRepository.findById(userId);
+            if (userOptional.isEmpty()) return null;
 
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                if (user.getRemainingGrades() > 0) {
-                    user.setRemainingGrades(user.getRemainingGrades() - 1);
-                    userRepository.save(user);
-                    topic.setRate(topic.getRate() + 1);
-                    topicRepository.save(topic);
-                } else throw new RuntimeException("У пользователя нет доступных лайков");
-            }
+            Topic topic = topicOptional.get();
+            User user = userOptional.get();
+
+            if (user.getRemainingGrades() > 0) {
+                user.setRemainingGrades(user.getRemainingGrades() - 1);
+                userRepository.save(user);
+                topic.setRate(topic.getRate() + 1);
+                return topicRepository.save(topic);
+            } else throw new RuntimeException("У пользователя нет доступных лайков");
         });
-
-        return topic;
     }
 }
