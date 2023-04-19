@@ -1,6 +1,8 @@
 spring:
   datasource:
-
+    url: jdbc:postgresql://localhost:5432/blps
+    username: callmepedro
+    password: postgres
 
   jpa:
     show-sql: true

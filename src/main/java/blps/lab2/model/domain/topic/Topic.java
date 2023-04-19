@@ -1,12 +1,14 @@
 package blps.lab2.model.domain.topic;
 
 import blps.lab2.model.domain.user.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "topic")
