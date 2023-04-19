@@ -4,10 +4,13 @@ import blps.lab2.model.domain.user.User;
 import blps.lab2.model.domain.user.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class UserView {
     private long id;

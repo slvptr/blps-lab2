@@ -28,8 +28,11 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests()
                     .antMatchers("/api/v1/auth/**").permitAll()
                     .antMatchers("/api/v1/search/**").permitAll()
-                    .antMatchers("/api/v1/user-management/**").hasAuthority(UserRole.ADMIN.name())
-                    .anyRequest().authenticated()
+                    .antMatchers(HttpMethod.DELETE,"/api/v1/topic/**").hasAuthority(UserRole.ADMIN.name())
+                    .antMatchers(HttpMethod.PUT,"/api/v1/topic/**").hasAuthority(UserRole.ADMIN.name())
+                    .antMatchers(HttpMethod.POST,"/api/v1/topic/**").hasAuthority(UserRole.ADMIN.name())
+
+                .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         ;

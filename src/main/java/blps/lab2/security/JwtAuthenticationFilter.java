@@ -7,6 +7,7 @@ import blps.lab2.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -51,7 +52,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         Long id = Long.parseLong(jwtService.getSubject(token));
-        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+        Authentication authContext = SecurityContextHolder.getContext().getAuthentication();
+        if (authContext == null || ((User) authContext.getPrincipal()).getId() != id) {
             Optional<User> maybeUser = this.userService.getUserById(id);
             if (maybeUser.isEmpty()) {
                 filterChain.doFilter(request, response);
