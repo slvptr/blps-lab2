@@ -45,7 +45,7 @@ public class RateService {
                     userRepository.save(user);
                     topic.setRate(topic.getRate() + 1);
                     topicRepository.save(topic);
-                }
+                } else throw new RuntimeException("У пользователя нет доступных лайков");
             }
         });
 
