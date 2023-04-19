@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'blps'
-version = '1.0'
+version = '2.0'
 sourceCompatibility = "16"
 
 repositories {
@@ -15,6 +15,11 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation "org.springframework.boot:spring-boot-starter-validation"
+	implementation "org.springframework.boot:spring-boot-starter-security"
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.10.2'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.10.2'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.10.2'
 	compileOnly 'org.projectlombok:lombok:1.18.26'
 	annotationProcessor 'org.projectlombok:lombok:1.18.26'
 	runtimeOnly 'org.postgresql:postgresql'

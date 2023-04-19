@@ -1,10 +1,10 @@
-package blps.lab2.controller;
+package blps.lab2.controller.topic;
 
 
 import blps.lab2.common.Constants;
-import blps.lab2.model.domain.TopicCategory;
-import blps.lab2.model.responses.TopicViewPage;
-import blps.lab2.service.TopicService;
+import blps.lab2.model.domain.topic.TopicCategory;
+import blps.lab2.model.responses.topic.TopicViewPage;
+import blps.lab2.service.topic.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

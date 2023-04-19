@@ -1,11 +1,11 @@
-package blps.lab2.service;
+package blps.lab2.service.topic;
 
-import blps.lab2.model.domain.Topic;
+import blps.lab2.model.domain.topic.Topic;
 import blps.lab2.dao.TopicRepository;
-import blps.lab2.model.domain.TopicCategory;
-import blps.lab2.model.requests.CreateTopicRequest;
-import blps.lab2.model.responses.TopicView;
-import blps.lab2.model.responses.TopicViewPage;
+import blps.lab2.model.domain.topic.TopicCategory;
+import blps.lab2.model.requests.topic.CreateTopicRequest;
+import blps.lab2.model.responses.topic.TopicView;
+import blps.lab2.model.responses.topic.TopicViewPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

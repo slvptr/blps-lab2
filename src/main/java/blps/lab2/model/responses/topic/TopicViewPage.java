@@ -1,4 +1,4 @@
-package blps.lab2.model.responses;
+package blps.lab2.model.responses.topic;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
