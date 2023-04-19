@@ -1,9 +1,6 @@
 package blps.lab2.controller;
 
-import blps.lab2.controller.exceptions.AlreadyExistException;
-import blps.lab2.controller.exceptions.AuthenticationFailException;
-import blps.lab2.controller.exceptions.InternalServerException;
-import blps.lab2.controller.exceptions.InvalidDataException;
+import blps.lab2.controller.exceptions.*;
 import blps.lab2.model.responses.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,5 +28,10 @@ public class ExceptionsHandler {
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleInternalServerException(InternalServerException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleNoAvailableGradesException(NoAvailableGradesException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
     }
 }
