@@ -36,7 +36,7 @@ class JwtServiceTest {
         TokensPair tokens = jwtService.generateTokens(user, expiresIn, expiresIn);
 
         SignedJWT signedJWT = SignedJWT.parse(tokens.getAccessToken());
-        JWSVerifier verifier = new MACVerifier("kvKHL5jkO4wrWWzyH+2fEhOnBp/a9nvwDD2XTE8GFmE=");
+        JWSVerifier verifier = new MACVerifier("123");
         assertTrue(signedJWT.verify(verifier));
 
         signedJWT = SignedJWT.parse(tokens.getRefreshToken());

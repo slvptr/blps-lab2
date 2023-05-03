@@ -30,7 +30,7 @@ import java.util.Map;
 public class JwtService {
 
     @Value("${application.security.jwt.secret}")
-    private String secret = "kvKHL5jkO4wrWWzyH+2fEhOnBp/a9nvwDD2XTE8GFmE=";
+    private String secret;
 
 
     public TokensPair generateTokens(User user, Long accessExpiresIn, Long refreshExpiresIn) throws JOSEException {
