@@ -18,7 +18,7 @@ import java.util.*;
 @RestController
 @RequestMapping("api/v1/topic")
 public class TopicController {
-    private TopicService topicService;
+    private final TopicService topicService;
 
     @Autowired
     public TopicController(TopicService topicService) {

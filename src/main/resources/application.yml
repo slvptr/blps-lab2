@@ -17,5 +17,6 @@ application:
   security:
     jwt:
       secret: kvKHL5jkO4wrWWzyH+2fEhOnBp/a9nvwDD2XTE8GFmE=
-      expiresIn: 600000
+      accessExpiresIn: 900
+      refreshExpiresIn: 86400
 

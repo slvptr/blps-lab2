@@ -3,6 +3,7 @@ package blps.lab2.controller.user;
 import blps.lab2.model.domain.user.User;
 import blps.lab2.model.domain.user.UserRole;
 import blps.lab2.model.requests.user.AuthUserRequest;
+import blps.lab2.model.requests.user.RefreshUserRequest;
 import blps.lab2.model.responses.user.AuthUserResponse;
 import blps.lab2.model.responses.user.UserView;
 import blps.lab2.service.user.AuthService;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.Date;
+
 
 @RestController
 @RequestMapping("api/v1/auth")
@@ -34,5 +35,10 @@ public class AuthController {
     @PostMapping("/login")
     public AuthUserResponse login(@RequestBody @Valid AuthUserRequest req) {
         return authService.login(req);
+    }
+
+    @PostMapping("/refresh")
+    public AuthUserResponse refresh(@RequestBody @Valid RefreshUserRequest req) {
+        return authService.refresh(req);
     }
 }

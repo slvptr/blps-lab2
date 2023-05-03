@@ -1,16 +1,26 @@
 package blps.lab2.service.user;
 
+import blps.lab2.controller.exceptions.AuthenticationFailException;
 import blps.lab2.model.domain.user.User;
 import blps.lab2.model.domain.user.UserRole;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import blps.lab2.utils.DateUtils;
+import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
+import com.nimbusds.jose.crypto.RSASSASigner;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
+import com.nimbusds.jose.util.Pair;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,74 +30,64 @@ import java.util.Map;
 public class JwtService {
 
     @Value("${application.security.jwt.secret}")
-    private String secret;
+    private String secret = "kvKHL5jkO4wrWWzyH+2fEhOnBp/a9nvwDD2XTE8GFmE=";
 
 
-    public String generateAccessToken(User user, Long expiresIn) {
-        return generateAccessToken(user, expiresIn, new HashMap<>());
+    public TokensPair generateTokens(User user, Long accessExpiresIn, Long refreshExpiresIn) throws JOSEException {
+        JWSSigner signer = new MACSigner(secret);
+
+        long currentUTCSeconds = DateUtils.currentUTCSeconds();
+        JWTClaimsSet accessTokenClaimsSet = new JWTClaimsSet.Builder()
+                .claim("userId", user.getId())
+                .claim("role", user.getRole().name())
+                .claim("iat", currentUTCSeconds)
+                .claim("exp", currentUTCSeconds + accessExpiresIn)
+                .build();
+        SignedJWT accessTokenJWS = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), accessTokenClaimsSet);
+        accessTokenJWS.sign(signer);
+
+        JWTClaimsSet refreshTokenClaimsSet = new JWTClaimsSet.Builder()
+                .claim("userId", user.getId())
+                .claim("iat", currentUTCSeconds)
+                .claim("exp", currentUTCSeconds + refreshExpiresIn)
+                .build();
+        SignedJWT refreshTokenJWS = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), refreshTokenClaimsSet);
+        refreshTokenJWS.sign(signer);
+
+        return new TokensPair(accessTokenJWS.serialize(), refreshTokenJWS.serialize());
     }
 
-    public String generateAccessToken(User user, Long expiresIn, Map<String, Object> extraClaims) {
-        Map<String, Object> userClaims = new HashMap<>();
-        userClaims.put("role", user.getRole().name());
-        userClaims.put("email", user.getEmail());
-        userClaims.put("remainingGrades", user.getRemainingGrades());
-        userClaims.putAll(extraClaims);
-
-        return Jwts
-                .builder()
-                .setClaims(userClaims)
-                .setSubject(Long.toString(user.getId()))
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expiresIn))
-                .signWith(SignatureAlgorithm.HS256, secret)
-                .compact();
-    }
-
-    public String getSubject(String token) {
-        return parseClaims(token).getSubject();
-    }
-
-    public Claims parseClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public boolean isValid(String token) {
+    public Map<String, Object> verifyAndParseClaims(String token) throws JOSEException {
+        JWSVerifier verifier = new MACVerifier(secret);
+        SignedJWT signedJWT;
         try {
-            if (isExpired(token)) {
-                return false;
-            }
-            Claims claims = parseClaims(token);
-            if (claims.getSubject() == null || claims.getSubject().length() == 0) {
-                return false;
-            }
-            String role = claims.get("role").toString();
-            boolean isRoleValid = false;
-            for (UserRole elem : UserRole.values()) {
-                if (elem.name().equals(role)) {
-                    isRoleValid = true;
-                    break;
-                }
-            }
-            if (!isRoleValid) {
-                return false;
-            }
-        } catch (Exception e) {
-            return false;
+            signedJWT = SignedJWT.parse(token);
+        } catch (ParseException e) {
+            throw new AuthenticationFailException(e.getMessage());
         }
-        return true;
-    }
-    private boolean isExpired(String token) {
-        Date expiresIn = parseClaims(token).getExpiration();
-        return expiresIn.before(new Date());
+
+        if (!signedJWT.verify(verifier)) {
+            throw new AuthenticationFailException("Signature is not verified");
+        }
+
+        JWTClaimsSet claimsSet;
+        try {
+            claimsSet = signedJWT.getJWTClaimsSet();
+            long userId = Long.parseLong(claimsSet.getClaim("userId").toString());
+            if (userId < 0) {
+                throw new AuthenticationFailException();
+            }
+            long exp = ((Date) claimsSet.getClaim("exp")).getTime() / 1000;
+            if (DateUtils.currentUTCSeconds() >= exp) {
+                throw new AuthenticationFailException("Token has expired");
+            }
+        } catch (NumberFormatException e) {
+            throw new AuthenticationFailException("Failed to parse expiration date");
+        } catch (ParseException e) {
+            throw new AuthenticationFailException(e.getMessage());
+        }
+
+        return claimsSet.getClaims();
     }
 
-
-    private Key createSignInKey(String secretKey) {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
 }

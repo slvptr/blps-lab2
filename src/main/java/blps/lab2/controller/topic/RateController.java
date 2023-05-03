@@ -13,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("api/v1/rate")
 public class RateController {
-    private RateService rateService;
+    private final RateService rateService;
 
     @Autowired
     public RateController(RateService rateService) {

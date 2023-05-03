@@ -17,6 +17,7 @@ public class TopicView {
     private String title;
     private String description;
     private TopicCategory category;
+    private Integer rate;
     private Date createdAt;
 
     public static TopicView fromTopic(Topic topic) {
@@ -24,6 +25,7 @@ public class TopicView {
                 topic.getTitle(),
                 topic.getDescription(),
                 topic.getCategory(),
+                topic.getRate(),
                 topic.getCreatedAt()
         );
     }

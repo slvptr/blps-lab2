@@ -1,15 +1,15 @@
-package blps.lab2.model.responses.user;
+package blps.lab2.service.user;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class AuthUserResponse {
+@NoArgsConstructor
+public class TokensPair {
     private String accessToken;
-    private Long expiresIn;
     private String refreshToken;
 }
